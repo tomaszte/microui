@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include "renderer.h"
-#include "microui.h"
+#include "../src/microui.h"
 
 
 static  char logbuf[64000];
@@ -235,7 +235,7 @@ static int text_height(mu_Font font) {
 int main(int argc, char **argv) {
   /* init SDL and renderer */
   SDL_Init(SDL_INIT_EVERYTHING);
-  r_init();
+  SDL_Window *window = r_init();
 
   /* init microui */
   mu_Context *ctx = malloc(sizeof(mu_Context));
@@ -245,11 +245,15 @@ int main(int argc, char **argv) {
 
   /* main loop */
   for (;;) {
+
+    int win_width, win_height;
+    SDL_GetWindowSize(window, &win_width, &win_height);
+    r_resize(win_width, win_height);
     /* handle SDL events */
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
-        case SDL_QUIT: exit(EXIT_SUCCESS); break;
+        case SDL_QUIT: exit(0); break;
         case SDL_MOUSEMOTION: mu_input_mousemove(ctx, e.motion.x, e.motion.y); break;
         case SDL_MOUSEWHEEL: mu_input_scroll(ctx, 0, e.wheel.y * -30); break;
         case SDL_TEXTINPUT: mu_input_text(ctx, e.text.text); break;

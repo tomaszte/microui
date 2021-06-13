@@ -1,5 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+
 #include <assert.h>
 #include "renderer.h"
 #include "atlas.inl"
@@ -11,19 +10,22 @@ static GLfloat  vert_buf[BUFFER_SIZE *  8];
 static GLubyte color_buf[BUFFER_SIZE * 16];
 static GLuint  index_buf[BUFFER_SIZE *  6];
 
-static int width  = 800;
-static int height = 600;
+static int width  = 640;
+static int height = 320;
 static int buf_idx;
 
-static SDL_Window *window;
+static SDL_Window *window_;
 
-
-void r_init(void) {
+SDL_Window* r_init(void) {
   /* init SDL window */
-  window = SDL_CreateWindow(
-    NULL, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    width, height, SDL_WINDOW_OPENGL);
-  SDL_GL_CreateContext(window);
+    window_ = SDL_CreateWindow(
+        NULL,
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        width,
+        height,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    SDL_GL_CreateContext(window_);
 
   /* init gl */
   glEnable(GL_BLEND);
@@ -45,6 +47,7 @@ void r_init(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   assert(glGetError() == 0);
+  return window_;
 }
 
 
@@ -73,6 +76,11 @@ static void flush(void) {
   buf_idx = 0;
 }
 
+static void r_resize(int w, int h)
+{
+    width = w;
+    height = h;
+}
 
 static void push_quad(mu_Rect dst, mu_Rect src, mu_Color color) {
   if (buf_idx == BUFFER_SIZE) { flush(); }
@@ -181,5 +189,5 @@ void r_clear(mu_Color clr) {
 
 void r_present(void) {
   flush();
-  SDL_GL_SwapWindow(window);
+  SDL_GL_SwapWindow(window_);
 }

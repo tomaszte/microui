@@ -1,9 +1,10 @@
 #ifndef RENDERER_H
 #define RENDERER_H
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include "../src/microui.h"
 
-#include "microui.h"
-
-void r_init(void);
+SDL_Window* r_init(void);
 void r_draw_rect(mu_Rect rect, mu_Color color);
 void r_draw_text(const char *text, mu_Vec2 pos, mu_Color color);
 void r_draw_icon(int id, mu_Rect rect, mu_Color color);
@@ -12,6 +13,7 @@ void r_draw_icon(int id, mu_Rect rect, mu_Color color);
 void r_set_clip_rect(mu_Rect rect);
 void r_clear(mu_Color color);
 void r_present(void);
+void r_resize(int w, int h);
 
 #endif
 
